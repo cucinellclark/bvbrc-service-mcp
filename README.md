@@ -1,13 +1,10 @@
 # BV-BRC Service MCP Server
 
-A Model Context Protocol (MCP) server that provides access to BV-BRC (Bacterial and Viral Bioinformatics Resource Center) data through the bvbrc-solr-python-api module.
+A Model Context Protocol (MCP) server that provides access to BV-BRC (Bacterial and Viral Bioinformatics Resource Center) services.
 
 ## Features
 
-- Access to genome and genome feature data
-- Query capabilities for various BV-BRC data types
-- Modular tool architecture for different data categories
-- Flask-based MCP server implementation
+- Submit bvbrc tools and services through convenient functions
 
 ## Installation
 
@@ -57,13 +54,3 @@ The server will start on port 8058 (configurable in `config.json`).
 ## Health Check
 
 The server provides a health check endpoint at `/health` that returns the server status.
-
-## Dependencies
-
-- flaskmcp
-- httpx >= 0.28
-- bvbrc-solr-python-api
-
-## License
-
-This project is part of the BV-BRC MCP Servers collection.
