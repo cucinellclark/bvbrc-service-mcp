@@ -1,4 +1,4 @@
-# BV-BRC Data MCP Server
+# BV-BRC Service MCP Server
 
 A Model Context Protocol (MCP) server that provides access to BV-BRC (Bacterial and Viral Bioinformatics Resource Center) data through the bvbrc-solr-python-api module.
 
@@ -28,7 +28,7 @@ source .venv/bin/activate
 
 ```bash
 git clone https://github.com/cucinellclark/bvbrc-service-mcp.git
-cd bvbrc-service
+cd bvbrc-service-mcp
 pip install -r requirements.txt
 ```
 
@@ -52,7 +52,7 @@ Run the MCP server:
 python server.py
 ```
 
-The server will start on port 8059 (configurable in `config.json`).
+The server will start on port 8058 (configurable in `config.json`).
 
 ## Health Check
 
