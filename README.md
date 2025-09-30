@@ -1,10 +1,12 @@
 # BV-BRC Service MCP Server
 
-A Model Context Protocol (MCP) server that provides access to BV-BRC (Bacterial and Viral Bioinformatics Resource Center) services.
+A Model Context Protocol (MCP) server that provides access to BV-BRC (Bacterial and Viral Bioinformatics Resource Center) services using FastMCP stdio.
 
 ## Features
 
 - Submit bvbrc tools and services through convenient functions
+- FastMCP stdio-based server for better performance and compatibility
+- Comprehensive genomics, metagenomics, and transcriptomics analysis tools
 
 ## Installation
 
@@ -35,9 +37,7 @@ The server uses a `config.json` file for configuration:
 
 ```json
 {
-    "service_api_url": "https://p3.theseed.org/services/app_service",
-    "port": 8058,
-    "token": "<bvbrc_token>"
+    "service_api_url": "https://p3.theseed.org/services/app_service"
 }
 ```
 
@@ -49,8 +49,15 @@ Run the MCP server:
 python server.py
 ```
 
-The server will start on port 8058 (configurable in `config.json`).
+The server uses FastMCP stdio for communication, making it compatible with MCP clients that support stdio transport.
 
-## Health Check
+## Available Tools
 
-The server provides a health check endpoint at `/health` that returns the server status.
+The server provides access to various BV-BRC analysis tools including:
+
+- **Genomics Analysis**: Genome assembly, annotation, comprehensive analysis
+- **Metagenomics**: Taxonomic classification, binning, read mapping
+- **Transcriptomics**: RNA-seq analysis, expression import
+- **Phylogenomics**: Phylogenetic trees, core genome MLST, SNP analysis
+- **Viral Analysis**: SARS-CoV-2 analysis, viral assembly, influenza analysis
+- **Utilities**: Sequence submission, primer design, variation analysis
