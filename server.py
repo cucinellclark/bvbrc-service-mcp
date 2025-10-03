@@ -9,7 +9,10 @@ from service_functions import (
     start_taxonomic_classification_app, start_metagenomic_binning_app, start_metagenomic_read_mapping_app,
     start_rnaseq_app, start_expression_import_app, start_sars_wastewater_analysis_app,
     start_sequence_submission_app, start_influenza_ha_subtype_conversion_app,
-    start_subspecies_classification_app, start_viral_assembly_app
+    start_subspecies_classification_app, start_viral_assembly_app, start_fastqutils_app,
+    start_genome_alignment_app, start_sars_genome_analysis_app, start_msa_snp_analysis_app,
+    start_metacats_app, start_proteome_comparison_app, start_comparative_systems_app,
+    start_docking_app, start_similar_genome_finder_app
 )
 import json
 import sys
@@ -19,9 +22,11 @@ with open('config.json', 'r') as f:
     config = json.load(f)
 
 service_api_url = config['service_api_url']
+similar_genome_finder_api_url = config.get('similar_genome_finder_api_url', service_api_url)
 port = config.get("port", 5001)
 
 api = JsonRpcCaller(service_api_url)
+similar_genome_finder_api = JsonRpcCaller(similar_genome_finder_api_url)
 
 app = create_app({'DEBUG': True})
 
@@ -145,9 +150,9 @@ def service_start_genome_assembly_app(token: str = None, paired_end_libs: List[D
       - analyze_quality: Enable quality analysis (optional)
       - assembly_output: Workspace path for assembly output (optional)
       - custom_pipeline: Customize RASTtk pipeline components (optional)""")
-def service_start_genome_annotation_app(token: str = None, contigs: str = None, scientific_name: str = None, taxonomy_id: int = None, code: int = 0, domain: str = "auto", public: bool = False, queue_nowait: bool = False, skip_indexing: bool = False, skip_workspace_output: bool = False, output_path: str = None, output_file: str = None, reference_genome_id: str = None, lowvan_min_contig_length: int = 300, lowvan_max_contig_length: int = 35000, reference_virus_name: str = None, fix_errors: bool = None, fix_frameshifts: bool = None, verbose_level: int = None, workflow: str = None, recipe: str = None, disable_replication: bool = None, analyze_quality: bool = None, assembly_output: str = None, custom_pipeline: Dict = None) -> str:
+def service_start_genome_annotation_app(token: str = None, genome_id: str = None, contigs: str = None, scientific_name: str = None, tax_id: str = None, my_label: str = None, taxonomy_id: int = None, code: int = 0, domain: str = "auto", public: bool = False, queue_nowait: bool = False, skip_indexing: bool = False, skip_workspace_output: bool = False, output_path: str = None, output_file: str = None, reference_genome_id: str = None, lowvan_min_contig_length: int = 300, lowvan_max_contig_length: int = 35000, reference_virus_name: str = None, fix_errors: bool = None, fix_frameshifts: bool = None, verbose_level: int = None, workflow: str = None, recipe: str = None, disable_replication: bool = None, analyze_quality: bool = None, assembly_output: str = None, custom_pipeline: Dict = None) -> str:
     user_id = extract_userid_from_token(token)
-    return start_genome_annotation_app(api, token=token, user_id=user_id, contigs=contigs, scientific_name=scientific_name, taxonomy_id=taxonomy_id, code=code, domain=domain, public=public, queue_nowait=queue_nowait, skip_indexing=skip_indexing, skip_workspace_output=skip_workspace_output, output_path=output_path, output_file=output_file, reference_genome_id=reference_genome_id, lowvan_min_contig_length=lowvan_min_contig_length, lowvan_max_contig_length=lowvan_max_contig_length, reference_virus_name=reference_virus_name, fix_errors=fix_errors, fix_frameshifts=fix_frameshifts, verbose_level=verbose_level, workflow=workflow, recipe=recipe, disable_replication=disable_replication, analyze_quality=analyze_quality, assembly_output=assembly_output, custom_pipeline=custom_pipeline)
+    return start_genome_annotation_app(api, token=token, user_id=user_id, genome_id=genome_id, contigs=contigs, scientific_name=scientific_name, tax_id=tax_id, my_label=my_label, taxonomy_id=taxonomy_id, code=code, domain=domain, public=public, queue_nowait=queue_nowait, skip_indexing=skip_indexing, skip_workspace_output=skip_workspace_output, output_path=output_path, output_file=output_file, reference_genome_id=reference_genome_id, lowvan_min_contig_length=lowvan_min_contig_length, lowvan_max_contig_length=lowvan_max_contig_length, reference_virus_name=reference_virus_name, fix_errors=fix_errors, fix_frameshifts=fix_frameshifts, verbose_level=verbose_level, workflow=workflow, recipe=recipe, disable_replication=disable_replication, analyze_quality=analyze_quality, assembly_output=assembly_output, custom_pipeline=custom_pipeline)
 
 @tool(name="service_start_comprehensive_genome_analysis_app", 
       description="""Perform comprehensive genome analysis from reads, contigs, or GenBank files.
@@ -318,13 +323,81 @@ def service_start_primer_design_app(token: str = None, output_file: str = None, 
     user_id = extract_userid_from_token(token)
     return start_primer_design_app(api, token=token, user_id=user_id, output_file=output_file, output_path=output_path, input_type=input_type, sequence_input=sequence_input, SEQUENCE_ID=SEQUENCE_ID, SEQUENCE_TARGET=SEQUENCE_TARGET, SEQUENCE_INCLUDED_REGION=SEQUENCE_INCLUDED_REGION, SEQUENCE_EXCLUDED_REGION=SEQUENCE_EXCLUDED_REGION, SEQUENCE_OVERLAP_JUNCTION_LIST=SEQUENCE_OVERLAP_JUNCTION_LIST, PRIMER_PICK_INTERNAL_OLIGO=PRIMER_PICK_INTERNAL_OLIGO, PRIMER_PRODUCT_SIZE_RANGE=PRIMER_PRODUCT_SIZE_RANGE, PRIMER_NUM_RETURN=PRIMER_NUM_RETURN, PRIMER_MIN_SIZE=PRIMER_MIN_SIZE, PRIMER_OPT_SIZE=PRIMER_OPT_SIZE, PRIMER_MAX_SIZE=PRIMER_MAX_SIZE, PRIMER_MAX_TM=PRIMER_MAX_TM, PRIMER_MIN_TM=PRIMER_MIN_TM, PRIMER_OPT_TM=PRIMER_OPT_TM, PRIMER_PAIR_MAX_DIFF_TM=PRIMER_PAIR_MAX_DIFF_TM, PRIMER_MAX_GC=PRIMER_MAX_GC, PRIMER_MIN_GC=PRIMER_MIN_GC, PRIMER_OPT_GC=PRIMER_OPT_GC, PRIMER_SALT_MONOVALENT=PRIMER_SALT_MONOVALENT, PRIMER_SALT_DIVALENT=PRIMER_SALT_DIVALENT, PRIMER_DNA_CONC=PRIMER_DNA_CONC, PRIMER_DNTP_CONC=PRIMER_DNTP_CONC)
 
-@tool(name="service_start_similar_genome_finder_app", description="")
-def service_start_similar_genome_finder_app(token: str = None) -> str:
-    return null
+@tool(name="service_start_similar_genome_finder_app", 
+      description="""Find similar genomes based on genomic similarity analysis.
+      
+      This tool identifies genomes with high similarity to a reference genome using
+      various genomic distance metrics and statistical methods. It supports filtering
+      by organism type, reference status, and similarity thresholds.
+      
+      Parameters:
+      - selectedGenomeId: Reference genome ID for similarity search (optional)
+      - fasta_file: FASTA/FASTQ file for similarity search (optional)
+      - max_pvalue: Maximum p-value threshold for similarity (optional)
+      - max_distance: Maximum distance threshold for similarity (optional) 
+      - max_hits: Maximum number of similar genomes to return (optional)
+      - include_reference: Include reference genomes in results (optional)
+      - include_representative: Include representative genomes in results (optional)
+      - include_bacterial: Include bacterial genomes in results (optional)
+      - include_viral: Include viral genomes in results (optional)
+      - output_path: Output directory path (required)
+      - output_file: Output file basename (required)
+      """)
+def service_start_similar_genome_finder_app(token: str = None, selectedGenomeId: str = None, fasta_file: str = None, max_pvalue: float = None, max_distance: float = None, max_hits: int = None, include_reference: bool = None, include_representative: bool = None, include_bacterial: bool = None, include_viral: bool = None, output_path: str = None, output_file: str = None) -> str:
+    user_id = extract_userid_from_token(token)
+    if not selectedGenomeId and not fasta_file:
+        return "Error: selectedGenomeId or fasta_file is required"
+    return start_similar_genome_finder_app(similar_genome_finder_api, token=token, user_id=user_id, selectedGenomeId=selectedGenomeId, fasta_file=fasta_file, max_pvalue=max_pvalue, max_distance=max_distance, max_hits=max_hits, include_reference=include_reference, include_representative=include_representative, include_bacterial=include_bacterial, include_viral=include_viral, output_path=output_path, output_file=output_file)
 
-@tool(name="service_start_genome_alignment_app", description="")
-def service_start_genome_alignment_app(token: str = None) -> str:
-    return null
+@tool(name="service_start_genome_alignment_app", 
+      description="""Perform multiple whole genome alignment with rearrangements using Mauve.
+      
+      This tool performs comprehensive whole genome alignment analysis using the Mauve
+      algorithm to identify conserved regions, rearrangements, and structural variations
+      across multiple genomes. It supports advanced alignment parameters and statistical
+      models for robust genome comparison and evolutionary analysis.
+      
+      Key Features:
+      - Multiple whole genome alignment with Mauve algorithm
+      - Detection of genomic rearrangements and structural variations
+      - Support for progressiveMauve and mauveAligner methods
+      - Advanced statistical parameters for alignment optimization
+      - HMM-based homologous region detection
+      - Breakpoint penalty and conservation distance scaling
+      - Configurable seed weight and gapped aligner parameters
+      
+      Alignment Methods:
+      - progressiveMauve: Progressive multiple genome alignment
+      - mauveAligner: Standard Mauve alignment algorithm
+      
+      Statistical Parameters:
+      - Seed weight: Controls initial anchor calculation
+      - Gapped aligner length: Maximum base pairs for gapped alignment
+      - Breakpoint distance scaling: Weight scaling by breakpoint distance (0-1)
+      - Conservation distance scaling: Scale conservation distances (0-1)
+      - Minimum pairwise LCB score: Threshold for locally collinear blocks
+      - Scaled penalty: Minimum breakpoint penalty after scaling
+      
+      HMM Parameters:
+      - P(Go|Homologous): Transition probability from unrelated to homologous state
+      - P(Go|Unrelated): Transition probability from homologous to unrelated state
+      
+      Parameters:
+      - genome_ids: List of genome IDs to align (required)
+      - recipe: Mauve method - progressiveMauve/mauveAligner (default: progressiveMauve)
+      - seedWeight: Seed weight for calculating initial anchors (optional)
+      - maxGappedAlignerLength: Maximum base pairs for gapped aligner (optional)
+      - maxBreakpointDistanceScale: Maximum weight scaling by breakpoint distance (0-1) (optional)
+      - conservationDistanceScale: Scale conservation distances (0-1) (optional)
+      - weight: Minimum pairwise LCB score (optional)
+      - minScaledPenalty: Minimum breakpoint penalty after scaling (optional)
+      - hmmPGoHomologous: Probability of transitioning from unrelated to homologous state (optional)
+      - hmmPGoUnrelated: Probability of transitioning from homologous to unrelated state (optional)
+      - output_path: Output directory (required)
+      - output_file: Output basename (required)""")
+def service_start_genome_alignment_app(token: str = None, genome_ids: List[str] = None, recipe: str = "progressiveMauve", seedWeight: float = None, maxGappedAlignerLength: float = None, maxBreakpointDistanceScale: float = None, conservationDistanceScale: float = None, weight: float = None, minScaledPenalty: float = None, hmmPGoHomologous: float = None, hmmPGoUnrelated: float = None, output_path: str = None, output_file: str = None) -> str:
+    user_id = extract_userid_from_token(token)
+    return start_genome_alignment_app(api, token=token, user_id=user_id, genome_ids=genome_ids, recipe=recipe, seedWeight=seedWeight, maxGappedAlignerLength=maxGappedAlignerLength, maxBreakpointDistanceScale=maxBreakpointDistanceScale, conservationDistanceScale=conservationDistanceScale, weight=weight, minScaledPenalty=minScaledPenalty, hmmPGoHomologous=hmmPGoHomologous, hmmPGoUnrelated=hmmPGoUnrelated, output_path=output_path, output_file=output_file)
 
 @tool(name="service_start_variation_app", 
       description="""Identify and annotate small nucleotide variations (SNVs) relative to a reference genome.
@@ -602,6 +675,282 @@ def service_start_whole_genome_snp_app(token: str = None, input_genome_type: str
     user_id = extract_userid_from_token(token)
     return start_whole_genome_snp_app(api, token=token, user_id=user_id, input_genome_type=input_genome_type, majority_threshold=majority_threshold, min_mid_linkage=min_mid_linkage, max_mid_linkage=max_mid_linkage, analysis_type=analysis_type, input_genome_group=input_genome_group, input_genome_fasta=input_genome_fasta, output_path=output_path, output_file=output_file)
 
+""" Protein Tools """
+
+@tool(name="service_start_msa_snp_analysis_app", 
+      description="""Compute multiple sequence alignment and analyze SNP/variance.
+      
+      This tool performs comprehensive multiple sequence alignment (MSA) analysis
+      to identify single nucleotide polymorphisms (SNPs) and other variations
+      across multiple sequences. It supports various input formats and alignment
+      algorithms for robust sequence comparison and variant analysis.
+      
+      Key Features:
+      - Multiple sequence alignment using MUSCLE, MAFFT, or progressiveMauve
+      - Support for DNA and protein sequences
+      - Multiple input formats: FASTA files, genome groups, feature groups, ID lists
+      - Reference sequence support for alignment optimization
+      - SNP and variation analysis
+      - Flexible alignment strategies and parameters
+      
+      Input Options:
+      - FASTA files: Direct sequence file input with format specification
+      - Genome groups: Pre-defined genome collections
+      - Feature groups: Annotated feature collections
+      - Feature lists: Direct feature ID collections
+      - Genome lists: Direct genome ID collections
+      - Keyboard input: Direct FASTA sequence input
+      
+      Alignment Algorithms:
+      - MUSCLE: Multiple sequence alignment by log-expectation
+      - MAFFT: Multiple alignment using fast Fourier transform
+      - progressiveMauve: Progressive multiple alignment
+      
+      MAFFT Strategies:
+      - auto: Automatic strategy selection
+      - fftns1, fftns2, fftnsi: FFT-based methods
+      - einsi, linsi, ginsi: Iterative refinement methods
+      
+      Reference Options:
+      - none: No reference sequence
+      - string: Direct sequence input
+      - feature_id: Feature identifier
+      - genome_id: Genome identifier
+      - first: Use first sequence as reference
+      
+      Parameters:
+      - input_status: Input alignment status - unaligned/aligned (default: unaligned)
+      - input_type: Input type - input_group/input_fasta/input_sequence/input_genomegroup/input_featurelist/input_genomelist (default: input_group)
+      - fasta_files: FASTA file groups with file and type (optional)
+      - select_genomegroup: Genome groups for analysis (optional)
+      - feature_groups: Feature groups for analysis (optional)
+      - feature_list: Feature ID lists (optional)
+      - genome_list: Genome ID lists (optional)
+      - aligner: Alignment algorithm - Muscle/Mafft/progressiveMauve (default: Muscle)
+      - alphabet: Sequence alphabet - dna/protein (default: dna)
+      - fasta_keyboard_input: Direct FASTA sequence input (optional)
+      - ref_type: Reference type - none/string/feature_id/genome_id/first (default: none)
+      - strategy: MAFFT strategy - auto/fftns1/fftns2/fftnsi/einsi/linsi/ginsi (default: auto)
+      - ref_string: Reference sequence identity (optional)
+      - output_path: Output directory (required)
+      - output_file: Output basename (required)""")
+def service_start_msa_snp_analysis_app(token: str = None, input_status: str = "unaligned", input_type: str = "input_group", fasta_files: List[Dict] = None, select_genomegroup: List[str] = None, feature_groups: List[str] = None, feature_list: List[str] = None, genome_list: List[str] = None, aligner: str = "Muscle", alphabet: str = "dna", fasta_keyboard_input: str = "", ref_type: str = "none", strategy: str = "auto", ref_string: str = "", output_path: str = None, output_file: str = None) -> str:
+    user_id = extract_userid_from_token(token)
+    return start_msa_snp_analysis_app(api, token=token, user_id=user_id, input_status=input_status, input_type=input_type, fasta_files=fasta_files, select_genomegroup=select_genomegroup, feature_groups=feature_groups, feature_list=feature_list, genome_list=genome_list, aligner=aligner, alphabet=alphabet, fasta_keyboard_input=fasta_keyboard_input, ref_type=ref_type, strategy=strategy, ref_string=ref_string, output_path=output_path, output_file=output_file)
+
+@tool(name="service_start_metacats_app", 
+      description="""Metadata-driven Comparative Analysis Tool (meta-CATS) for identifying significant differences between sequence groups.
+      
+      This tool performs comprehensive comparative analysis to identify positions that
+      significantly differ between user-defined groups of sequences. It uses statistical
+      methods to detect variations and associations across different sequence groups
+      based on metadata and alignment data.
+      
+      Key Features:
+      - Statistical analysis of sequence positions between groups
+      - Support for nucleotide and amino acid sequences
+      - Multiple input types: feature groups, alignment files, group files
+      - Metadata-driven group definition and analysis
+      - Configurable p-value thresholds for significance testing
+      - Year range filtering and metadata grouping
+      - Flexible group assignment and analysis
+      
+      Input Types:
+      - auto: Automatic input type detection
+      - groups: Feature group-based analysis
+      - files: File-based analysis with alignment and group files
+      
+      Sequence Alphabets:
+      - na: Nucleotide sequences (DNA/RNA)
+      - aa: Amino acid sequences (proteins)
+      
+      Analysis Options:
+      - Feature groups: Pre-defined feature collections
+      - Alignment files: Direct sequence alignment input
+      - Group files: TSV files defining sequence groups
+      - Auto groups: Manual group assignment with metadata
+      
+      Statistical Parameters:
+      - P-value cutoff: Significance threshold for analysis (default: 0.05)
+      - Year ranges: Temporal filtering for sequences
+      - Metadata grouping: Category-based analysis
+      
+      Group Assignment:
+      - Feature/sequence IDs: Unique identifiers for sequences
+      - Group strings: Descriptive group assignments
+      - Genome IDs: Associated genome identifiers
+      - Metadata categories: Original metadata classification
+      
+      Parameters:
+      - output_path: Output directory (required)
+      - output_file: Output basename (required)
+      - p_value: P-value cutoff for significance testing (default: 0.05)
+      - year_ranges: Year ranges for temporal filtering (optional)
+      - metadata_group: Metadata type for reference (optional)
+      - input_type: Input type - auto/groups/files (required)
+      - alphabet: Sequence alphabet - na/aa (default: na)
+      - groups: Feature groups for analysis (optional)
+      - alignment_file: Alignment file location (optional)
+      - group_file: Group file location (optional)
+      - alignment_type: Alignment format - aligned_dna_fasta/aligned_protein_fasta (optional)
+      - auto_groups: Manual group assignments with id, grp, g_id, metadata (optional)""")
+def service_start_metacats_app(token: str = None, output_path: str = None, output_file: str = None, p_value: float = 0.05, year_ranges: str = None, metadata_group: str = None, input_type: str = None, alphabet: str = "na", groups: List[str] = None, alignment_file: str = None, group_file: str = None, alignment_type: str = None, auto_groups: List[Dict] = None) -> str:
+    user_id = extract_userid_from_token(token)
+    return start_metacats_app(api, token=token, user_id=user_id, output_path=output_path, output_file=output_file, p_value=p_value, year_ranges=year_ranges, metadata_group=metadata_group, input_type=input_type, alphabet=alphabet, groups=groups, alignment_file=alignment_file, group_file=group_file, alignment_type=alignment_type, auto_groups=auto_groups)
+
+@tool(name="service_start_proteome_comparison_app", 
+      description="""Compare proteome sets from multiple genomes using BLAST-based analysis.
+      
+      This tool performs comprehensive proteome comparison across multiple genomes
+      using BLAST algorithms to identify homologous proteins, functional similarities,
+      and evolutionary relationships. It supports various input formats and provides
+      detailed comparative analysis with configurable similarity thresholds.
+      
+      Key Features:
+      - BLAST-based proteome comparison across multiple genomes
+      - Support for genome IDs, user genomes, and feature groups
+      - Configurable reference genome selection
+      - Advanced BLAST parameters for similarity detection
+      - Coverage and identity threshold controls
+      - E-value and positive scoring position filtering
+      - Comprehensive comparative analysis results
+      
+      Input Options:
+      - Genome IDs: Pre-defined genome collections from database
+      - User genomes: Custom protein sequence files in FASTA format
+      - Feature groups: Annotated feature collections
+      - Reference genome: Configurable reference genome selection
+      
+      BLAST Parameters:
+      - Minimum sequence coverage: Threshold for query and subject coverage (default: 0.30)
+      - Maximum E-value: Statistical significance threshold (default: 1e-5)
+      - Minimum identity: Fraction identity threshold (default: 0.1)
+      - Minimum positives: Positive-scoring positions threshold (default: 0.2)
+      
+      Analysis Features:
+      - Homologous protein identification
+      - Functional similarity assessment
+      - Evolutionary relationship analysis
+      - Comparative proteome statistics
+      - Reference-based comparison framework
+      
+      Parameters:
+      - genome_ids: Genome IDs for comparison (optional)
+      - user_genomes: Custom protein sequence files in FASTA format (optional)
+      - user_feature_groups: Feature groups for analysis (optional)
+      - reference_genome_index: Index of reference genome (1-based) (default: 1)
+      - min_seq_cov: Minimum coverage of query and subject (default: 0.30)
+      - max_e_val: Maximum E-value threshold (default: 1e-5)
+      - min_ident: Minimum fraction identity (default: 0.1)
+      - min_positives: Minimum fraction positive-scoring positions (default: 0.2)
+      - output_path: Output directory (required)
+      - output_file: Output basename (required)""")
+def service_start_proteome_comparison_app(token: str = None, genome_ids: List[str] = None, user_genomes: List[str] = None, user_feature_groups: List[str] = None, reference_genome_index: int = 1, min_seq_cov: float = 0.30, max_e_val: float = 1e-5, min_ident: float = 0.1, min_positives: float = 0.2, output_path: str = None, output_file: str = None) -> str:
+    user_id = extract_userid_from_token(token)
+    return start_proteome_comparison_app(api, token=token, user_id=user_id, genome_ids=genome_ids, user_genomes=user_genomes, user_feature_groups=user_feature_groups, reference_genome_index=reference_genome_index, min_seq_cov=min_seq_cov, max_e_val=max_e_val, min_ident=min_ident, min_positives=min_positives, output_path=output_path, output_file=output_file)
+
+@tool(name="service_start_protein_family_sorter_app", description="")
+def service_start_protein_family_sorter_app(token: str = None) -> str:
+    return None
+
+@tool(name="service_start_comparative_systems_app", 
+      description="""Create data structures to decompose genomes for comparative analysis.
+      
+      This tool creates specialized data structures to decompose and analyze genomes
+      for comparative systems biology studies. It processes genome collections and
+      generates structured data representations that facilitate downstream comparative
+      analysis and systems-level investigations.
+      
+      Key Features:
+      - Genome decomposition and data structure creation
+      - Support for individual genome IDs and genome groups
+      - Structured data representation for comparative analysis
+      - Systems-level genome organization and analysis
+      - Data structure optimization for large-scale comparisons
+      - Flexible input handling for various genome collections
+      
+      Input Options:
+      - Genome IDs: Individual genome identifiers for analysis
+      - Genome Groups: Pre-defined genome collections
+      - Mixed inputs: Combination of individual genomes and groups
+      
+      Analysis Capabilities:
+      - Genome structure decomposition
+      - Comparative data structure generation
+      - Systems-level organization
+      - Data structure optimization
+      - Comparative framework preparation
+      
+      Use Cases:
+      - Systems biology research
+      - Comparative genomics studies
+      - Large-scale genome analysis
+      - Data structure preparation for downstream tools
+      - Genome collection organization
+      
+      Parameters:
+      - output_path: Output directory (required)
+      - output_file: Output basename (required)
+      - genome_ids: Individual genome IDs for analysis (optional)
+      - genome_groups: Genome groups for analysis (optional)""")
+def service_start_comparative_systems_app(token: str = None, output_path: str = None, output_file: str = None, genome_ids: List[str] = None, genome_groups: List[str] = None) -> str:
+    user_id = extract_userid_from_token(token)
+    return start_comparative_systems_app(api, token=token, user_id=user_id, output_path=output_path, output_file=output_file, genome_ids=genome_ids, genome_groups=genome_groups)
+
+@tool(name="service_start_docking_app", 
+      description="""Dock small molecules into protein structures using advanced molecular docking algorithms.
+      
+      This tool performs comprehensive molecular docking analysis to predict the binding
+      of small molecules to protein structures. It supports multiple input formats for
+      proteins and ligands, with configurable docking parameters and result filtering.
+      
+      Key Features:
+      - Small molecule docking into protein structures
+      - Multiple protein input types: PDB identifiers and user-provided files
+      - Flexible ligand library options: named libraries, SMILES lists, workspace files
+      - Advanced DiffDock algorithm with configurable batch processing
+      - Top-N result filtering and ranking
+      - Debug mode for detailed analysis output
+      - High-performance batch processing optimization
+      
+      Protein Input Options:
+      - input_pdb: PDB identifiers from precomputed structures
+      - user_pdb_file: User-provided PDB files from workspace
+      
+      Ligand Library Options:
+      - ws_file: Workspace files containing SMILES strings
+      - named_library: Pre-defined ligand libraries
+      - smiles_list: Direct SMILES string arrays
+      
+      Docking Parameters:
+      - Batch size: DiffDock batch processing size (default: 10)
+      - Top N results: Number of top-ranked results to return
+      - Performance optimization: Automatic batch size adjustment based on protein size
+      
+      Analysis Features:
+      - Binding pose prediction
+      - Binding affinity estimation
+      - Molecular interaction analysis
+      - Conformational sampling
+      - Result ranking and filtering
+      
+      Parameters:
+      - protein_input_type: Type of PDB input - input_pdb/user_pdb_file (required)
+      - input_pdb: PDB identifiers for precomputed structures (optional)
+      - user_pdb_file: User-provided PDB files (optional)
+      - ligand_library_type: Ligand library type - ws_file/named_library/smiles_list (required)
+      - ligand_named_library: Name of ligand library (optional)
+      - ligand_smiles_list: Array of SMILES strings (optional)
+      - ligand_ws_file: Workspace file with SMILES strings (optional)
+      - top_n: Return top N results (optional)
+      - batch_size: DiffDock batch size (default: 10)
+      - output_path: Output directory (required)
+      - output_file: Output basename (required)
+      - enable_debug: Enable debug statements (optional)""")
+def service_start_docking_app(token: str = None, protein_input_type: str = None, input_pdb: List[str] = None, user_pdb_file: List[str] = None, ligand_library_type: str = None, ligand_named_library: str = None, ligand_smiles_list: List[str] = None, ligand_ws_file: str = None, top_n: int = None, batch_size: int = 10, output_path: str = None, output_file: str = None, enable_debug: bool = None) -> str:
+    user_id = extract_userid_from_token(token)
+    return start_docking_app(api, token=token, user_id=user_id, protein_input_type=protein_input_type, input_pdb=input_pdb, user_pdb_file=user_pdb_file, ligand_library_type=ligand_library_type, ligand_named_library=ligand_named_library, ligand_smiles_list=ligand_smiles_list, ligand_ws_file=ligand_ws_file, top_n=top_n, batch_size=batch_size, output_path=output_path, output_file=output_file, enable_debug=enable_debug)
+
 """ Metagenomics Services """
 
 @tool(name="service_start_taxonomic_classification_app", 
@@ -858,9 +1207,66 @@ def service_start_expression_import_app(token: str = None, xfile: str = None, mf
 
 """ Utilities Services """
 
-@tool(name="service_start_fastq_utils_app", description="")
-def service_start_fastq_utils_app(token: str = None) -> str:
-    return null
+@tool(name="service_start_fastqutils_app", 
+      description="""Compute multiple sequence alignment and analyze SNP/variance.
+      
+      This tool performs comprehensive multiple sequence alignment (MSA) analysis
+      to identify single nucleotide polymorphisms (SNPs) and other variations
+      across multiple sequences. It supports various input formats and alignment
+      algorithms for robust sequence comparison and variant analysis.
+      
+      Key Features:
+      - Multiple sequence alignment using MUSCLE, MAFFT, or progressiveMauve
+      - Support for DNA and protein sequences
+      - Multiple input formats: FASTA files, genome groups, feature groups, ID lists
+      - Reference sequence support for alignment optimization
+      - SNP and variation analysis
+      - Flexible alignment strategies and parameters
+      
+      Input Options:
+      - FASTA files: Direct sequence file input
+      - Genome groups: Pre-defined genome collections
+      - Feature groups: Annotated feature collections
+      - Feature lists: Direct feature ID collections
+      - Genome lists: Direct genome ID collections
+      - Keyboard input: Direct FASTA sequence input
+      
+      Alignment Algorithms:
+      - MUSCLE: Multiple sequence alignment by log-expectation
+      - MAFFT: Multiple alignment using fast Fourier transform
+      - progressiveMauve: Progressive multiple alignment
+      
+      MAFFT Strategies:
+      - auto: Automatic strategy selection
+      - fftns1, fftns2, fftnsi: FFT-based methods
+      - einsi, linsi, ginsi: Iterative refinement methods
+      
+      Reference Options:
+      - none: No reference sequence
+      - string: Direct sequence input
+      - feature_id: Feature identifier
+      - genome_id: Genome identifier
+      - first: Use first sequence as reference
+      
+      Parameters:
+      - input_status: Input alignment status - unaligned/aligned (default: unaligned)
+      - input_type: Input type - input_group/input_fasta/input_sequence/input_genomegroup/input_featurelist/input_genomelist (default: input_group)
+      - fasta_files: FASTA file groups with file and type (optional)
+      - select_genomegroup: Genome groups for analysis (optional)
+      - feature_groups: Feature groups for analysis (optional)
+      - feature_list: Feature ID lists (optional)
+      - genome_list: Genome ID lists (optional)
+      - aligner: Alignment algorithm - Muscle/Mafft/progressiveMauve (default: Muscle)
+      - alphabet: Sequence alphabet - dna/protein (default: dna)
+      - fasta_keyboard_input: Direct FASTA sequence input (optional)
+      - ref_type: Reference type - none/string/feature_id/genome_id/first (default: none)
+      - strategy: MAFFT strategy - auto/fftns1/fftns2/fftnsi/einsi/linsi/ginsi (default: auto)
+      - ref_string: Reference sequence identity (optional)
+      - output_path: Output directory (required)
+      - output_file: Output basename (required)""")
+def service_start_fastqutils_app(token: str = None, input_status: str = "unaligned", input_type: str = "input_group", fasta_files: List[Dict] = None, select_genomegroup: List[str] = None, feature_groups: List[str] = None, feature_list: List[str] = None, genome_list: List[str] = None, aligner: str = "Muscle", alphabet: str = "dna", fasta_keyboard_input: str = "", ref_type: str = "none", strategy: str = "auto", ref_string: str = "", output_path: str = None, output_file: str = None) -> str:
+    user_id = extract_userid_from_token(token)
+    return start_fastqutils_app(api, token=token, user_id=user_id, input_status=input_status, input_type=input_type, fasta_files=fasta_files, select_genomegroup=select_genomegroup, feature_groups=feature_groups, feature_list=feature_list, genome_list=genome_list, aligner=aligner, alphabet=alphabet, fasta_keyboard_input=fasta_keyboard_input, ref_type=ref_type, strategy=strategy, ref_string=ref_string, output_path=output_path, output_file=output_file)
 
 @tool(name="service_start_id_mapper_app", description="")
 def service_start_id_mapper_app(token: str = None) -> str:
@@ -868,9 +1274,66 @@ def service_start_id_mapper_app(token: str = None) -> str:
 
 """ Viral Services """
 
-@tool(name="service_start_sars_genome_analysis_app", description="")
-def service_start_sars_genome_analysis_app(token: str = None) -> str:
-    return null
+@tool(name="service_start_sars_genome_analysis_app", 
+      description="""Assemble SARS-CoV-2 reads into consensus sequences using specialized assembly strategies.
+      
+      This tool performs comprehensive SARS-CoV-2 genome assembly from sequencing reads
+      using specialized assembly strategies optimized for viral genomes. It supports
+      multiple sequencing platforms and primer sets for accurate consensus sequence
+      generation and variant detection.
+      
+      Key Features:
+      - SARS-CoV-2 specific assembly strategies: auto, onecodex, cdc-illumina, cdc-nanopore, artic-nanopore
+      - Multiple primer sets: ARTIC, midnight, qiagen, swift, varskip, varskip-long
+      - Support for various sequencing platforms: Illumina, PacBio, Nanopore, IonTorrent
+      - Paired-end and single-end read support
+      - SRA dataset integration
+      - Coverage depth filtering and consensus generation
+      - Intermediate output management
+      
+      Assembly Recipes:
+      - auto: Automatic strategy selection based on input data
+      - onecodex: OneCodex assembly method
+      - cdc-illumina: CDC Illumina-specific assembly
+      - cdc-nanopore: CDC Nanopore-specific assembly
+      - artic-nanopore: ARTIC Nanopore assembly
+      
+      Primer Sets:
+      - ARTIC: Standard ARTIC primer set
+      - midnight: Midnight primer set
+      - qiagen: QIAGEN primer set
+      - swift: Swift primer set
+      - varskip: VarSkip primer set
+      - varskip-long: VarSkip long primer set
+      
+      Input Options:
+      - Paired-end reads: Dual read libraries with platform detection
+      - Single-end reads: Single read libraries with platform detection
+      - SRA datasets: Sequence Read Archive integration
+      - Platform inference: Automatic platform detection
+      
+      Quality Control:
+      - Minimum depth filtering: Threshold for consensus inclusion
+      - Maximum depth filtering: Upper limit for read consideration
+      - Coverage optimization: Balanced depth for consensus quality
+      - Intermediate file management: Optional retention of intermediate outputs
+      
+      Parameters:
+      - paired_end_libs: Paired-end read libraries with read1, read2, platform, interleaved, read_orientation_outward (optional)
+      - single_end_libs: Single-end read libraries with read, platform (optional)
+      - srr_ids: SRA Run IDs (optional)
+      - recipe: Assembly recipe - auto/onecodex/cdc-illumina/cdc-nanopore/artic-nanopore (default: auto)
+      - primers: Primer set - ARTIC/midnight/qiagen/swift/varskip/varskip-long (default: ARTIC)
+      - primer_version: Version number for primer set (optional)
+      - min_depth: Minimum coverage depth for consensus (default: 100)
+      - max_depth: Maximum coverage depth for consensus (default: 8000)
+      - keep_intermediates: Keep intermediate outputs (default: 0)
+      - output_path: Output directory (required)
+      - output_file: Output basename (required)
+      - debug_level: Debugging level (default: 0)""")
+def service_start_sars_genome_analysis_app(token: str = None, paired_end_libs: List[Dict] = None, single_end_libs: List[Dict] = None, srr_ids: List[str] = None, recipe: str = "auto", primers: str = "ARTIC", primer_version: str = None, min_depth: int = 100, max_depth: int = 8000, keep_intermediates: int = 0, output_path: str = None, output_file: str = None, debug_level: int = 0) -> str:
+    user_id = extract_userid_from_token(token)
+    return start_sars_genome_analysis_app(api, token=token, user_id=user_id, paired_end_libs=paired_end_libs, single_end_libs=single_end_libs, srr_ids=srr_ids, recipe=recipe, primers=primers, primer_version=primer_version, min_depth=min_depth, max_depth=max_depth, keep_intermediates=keep_intermediates, output_path=output_path, output_file=output_file, debug_level=debug_level)
 
 @tool(name="service_start_sars_wastewater_analysis_app", 
       description="""Assemble SARS-CoV-2 reads into consensus sequences for wastewater surveillance.

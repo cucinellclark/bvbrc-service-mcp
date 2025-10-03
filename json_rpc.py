@@ -66,8 +66,7 @@ class JsonRpcCaller:
             return result.get("result", {})
         
         except Exception as e:
-            import pdb; pdb.set_trace()
-            print(f"error: {e.reason}")
+            print(f"error: {e.response.text}")
         except requests.RequestException as e:
             raise requests.RequestException(f"HTTP request failed: {e}")
         except json.JSONDecodeError as e:

@@ -37,7 +37,7 @@ def start_date_app(api: JsonRpcCaller, token: str = None, user_id: str = None, o
         print(e)
         return []
 
-def start_genome_annotation_app(api: JsonRpcCaller, token: str = None, user_id: str = None, genome_id: str = None, contigs: str = None, scientific_name: str = None, tax_id: str = None, my_label: str = None, reference_genome_id: str = None, taxonomy_id: str = None) -> str:
+def start_genome_annotation_app(api: JsonRpcCaller, token: str = None, user_id: str = None, genome_id: str = None, contigs: str = None, scientific_name: str = None, tax_id: str = None, my_label: str = None, reference_genome_id: str = None, taxonomy_id: str = None, code: int = 0, domain: str = "auto", public: bool = False, queue_nowait: bool = False, skip_indexing: bool = False, skip_workspace_output: bool = False, output_path: str = None, output_file: str = None, lowvan_min_contig_length: int = 300, lowvan_max_contig_length: int = 35000, reference_virus_name: str = None, fix_errors: bool = None, fix_frameshifts: bool = None, verbose_level: int = None, workflow: str = None, recipe: str = None, disable_replication: bool = None, analyze_quality: bool = None, assembly_output: str = None, custom_pipeline: Dict = None) -> str:
     app_name = "GenomeAnnotation"
     try:
         if genome_id is None:
@@ -63,8 +63,26 @@ def start_genome_annotation_app(api: JsonRpcCaller, token: str = None, user_id: 
             "my_label": my_label,
             "reference_genome_id": reference_genome_id,
             "taxonomy_id": taxonomy_id,
+            "code": code,
+            "domain": domain,
+            "public": public,
+            "queue_nowait": queue_nowait,
+            "skip_indexing": skip_indexing,
+            "skip_workspace_output": skip_workspace_output,
             "output_path": output_path,
-            "output_file": output_file
+            "output_file": output_file,
+            "lowvan_min_contig_length": lowvan_min_contig_length,
+            "lowvan_max_contig_length": lowvan_max_contig_length,
+            "reference_virus_name": reference_virus_name,
+            "fix_errors": fix_errors,
+            "fix_frameshifts": fix_frameshifts,
+            "verbose_level": verbose_level,
+            "workflow": workflow,
+            "recipe": recipe,
+            "disable_replication": disable_replication,
+            "analyze_quality": analyze_quality,
+            "assembly_output": assembly_output,
+            "custom_pipeline": custom_pipeline
         }
         data = ["GenomeAnnotation", params, {}]
         result = api.call("AppService.start_app2", data, 1, token)
@@ -635,6 +653,235 @@ def start_viral_assembly_app(api: JsonRpcCaller, token: str = None, user_id: str
         data = ["ViralAssembly", params, {}]
         result = api.call("AppService.start_app2", data, 1, token)
         return result
+    except Exception as e:
+        print(e)
+        return []
+
+def start_fastqutils_app(api: JsonRpcCaller, token: str = None, user_id: str = None, input_status: str = "unaligned", input_type: str = "input_group", fasta_files: List[Dict] = None, select_genomegroup: List[str] = None, feature_groups: List[str] = None, feature_list: List[str] = None, genome_list: List[str] = None, aligner: str = "Muscle", alphabet: str = "dna", fasta_keyboard_input: str = "", ref_type: str = "none", strategy: str = "auto", ref_string: str = "", output_path: str = None, output_file: str = None) -> str:
+    app_name = "MSA"
+    try:
+        # Set default values if not provided
+        output_path, output_file = _set_default_output_paths(user_id, app_name, output_path, output_file)
+        params = {
+            "input_status": input_status,
+            "input_type": input_type,
+            "fasta_files": fasta_files or [],
+            "select_genomegroup": select_genomegroup or [],
+            "feature_groups": feature_groups or [],
+            "feature_list": feature_list or [],
+            "genome_list": genome_list or [],
+            "aligner": aligner,
+            "alphabet": alphabet,
+            "fasta_keyboard_input": fasta_keyboard_input,
+            "ref_type": ref_type,
+            "strategy": strategy,
+            "ref_string": ref_string,
+            "output_path": output_path,
+            "output_file": output_file
+        }
+        data = ["MSA", params, {}]
+        result = api.call("AppService.start_app2", data, 1, token)
+        return result
+    except Exception as e:
+        print(e)
+        return []
+
+def start_genome_alignment_app(api: JsonRpcCaller, token: str = None, user_id: str = None, genome_ids: List[str] = None, recipe: str = "progressiveMauve", seedWeight: float = None, maxGappedAlignerLength: float = None, maxBreakpointDistanceScale: float = None, conservationDistanceScale: float = None, weight: float = None, minScaledPenalty: float = None, hmmPGoHomologous: float = None, hmmPGoUnrelated: float = None, output_path: str = None, output_file: str = None) -> str:
+    app_name = "GenomeAlignment"
+    try:
+        # Set default values if not provided
+        output_path, output_file = _set_default_output_paths(user_id, app_name, output_path, output_file)
+        params = {
+            "genome_ids": genome_ids or [],
+            "recipe": recipe,
+            "seedWeight": seedWeight,
+            "maxGappedAlignerLength": maxGappedAlignerLength,
+            "maxBreakpointDistanceScale": maxBreakpointDistanceScale,
+            "conservationDistanceScale": conservationDistanceScale,
+            "weight": weight,
+            "minScaledPenalty": minScaledPenalty,
+            "hmmPGoHomologous": hmmPGoHomologous,
+            "hmmPGoUnrelated": hmmPGoUnrelated,
+            "output_path": output_path,
+            "output_file": output_file
+        }
+        data = ["GenomeAlignment", params, {}]
+        result = api.call("AppService.start_app2", data, 1, token)
+        return result
+    except Exception as e:
+        print(e)
+        return []
+
+def start_sars_genome_analysis_app(api: JsonRpcCaller, token: str = None, user_id: str = None, paired_end_libs: List[Dict] = None, single_end_libs: List[Dict] = None, srr_ids: List[str] = None, recipe: str = "auto", primers: str = "ARTIC", primer_version: str = None, min_depth: int = 100, max_depth: int = 8000, keep_intermediates: int = 0, output_path: str = None, output_file: str = None, debug_level: int = 0) -> str:
+    app_name = "SARS2Assembly"
+    try:
+        # Set default values if not provided
+        output_path, output_file = _set_default_output_paths(user_id, app_name, output_path, output_file)
+        params = {
+            "paired_end_libs": paired_end_libs or [],
+            "single_end_libs": single_end_libs or [],
+            "srr_ids": srr_ids or [],
+            "recipe": recipe,
+            "primers": primers,
+            "primer_version": primer_version or "",
+            "min_depth": min_depth,
+            "max_depth": max_depth,
+            "keep_intermediates": keep_intermediates,
+            "output_path": output_path,
+            "output_file": output_file,
+            "debug_level": debug_level
+        }
+        data = ["SARS2Assembly", params, {}]
+        result = api.call("AppService.start_app2", data, 1, token)
+        return result
+    except Exception as e:
+        print(e)
+        return []
+
+def start_msa_snp_analysis_app(api: JsonRpcCaller, token: str = None, user_id: str = None, input_status: str = "unaligned", input_type: str = "input_group", fasta_files: List[Dict] = None, select_genomegroup: List[str] = None, feature_groups: List[str] = None, feature_list: List[str] = None, genome_list: List[str] = None, aligner: str = "Muscle", alphabet: str = "dna", fasta_keyboard_input: str = "", ref_type: str = "none", strategy: str = "auto", ref_string: str = "", output_path: str = None, output_file: str = None) -> str:
+    app_name = "MSA"
+    try:
+        # Set default values if not provided
+        output_path, output_file = _set_default_output_paths(user_id, app_name, output_path, output_file)
+        params = {
+            "input_status": input_status,
+            "input_type": input_type,
+            "fasta_files": fasta_files or [],
+            "select_genomegroup": select_genomegroup or [],
+            "feature_groups": feature_groups or [],
+            "feature_list": feature_list or [],
+            "genome_list": genome_list or [],
+            "aligner": aligner,
+            "alphabet": alphabet,
+            "fasta_keyboard_input": fasta_keyboard_input,
+            "ref_type": ref_type,
+            "strategy": strategy,
+            "ref_string": ref_string,
+            "output_path": output_path,
+            "output_file": output_file
+        }
+        data = ["MSA", params, {}]
+        result = api.call("AppService.start_app2", data, 1, token)
+        return result
+    except Exception as e:
+        print(e)
+        return []
+
+def start_metacats_app(api: JsonRpcCaller, token: str = None, user_id: str = None, output_path: str = None, output_file: str = None, p_value: float = 0.05, year_ranges: str = None, metadata_group: str = None, input_type: str = None, alphabet: str = "na", groups: List[str] = None, alignment_file: str = None, group_file: str = None, alignment_type: str = None, auto_groups: List[Dict] = None) -> str:
+    app_name = "MetaCATS"
+    try:
+        # Set default values if not provided
+        output_path, output_file = _set_default_output_paths(user_id, app_name, output_path, output_file)
+        params = {
+            "output_path": output_path,
+            "output_file": output_file,
+            "p_value": p_value,
+            "year_ranges": year_ranges or "",
+            "metadata_group": metadata_group or "",
+            "input_type": input_type or "",
+            "alphabet": alphabet,
+            "groups": groups or [],
+            "alignment_file": alignment_file or "",
+            "group_file": group_file or "",
+            "alignment_type": alignment_type or "",
+            "auto_groups": auto_groups or []
+        }
+        data = ["MetaCATS", params, {}]
+        result = api.call("AppService.start_app2", data, 1, token)
+        return result
+    except Exception as e:
+        print(e)
+        return []
+
+def start_proteome_comparison_app(api: JsonRpcCaller, token: str = None, user_id: str = None, genome_ids: List[str] = None, user_genomes: List[str] = None, user_feature_groups: List[str] = None, reference_genome_index: int = 1, min_seq_cov: float = 0.30, max_e_val: float = 1e-5, min_ident: float = 0.1, min_positives: float = 0.2, output_path: str = None, output_file: str = None) -> str:
+    app_name = "GenomeComparison"
+    try:
+        # Set default values if not provided
+        output_path, output_file = _set_default_output_paths(user_id, app_name, output_path, output_file)
+        params = {
+            "genome_ids": genome_ids or [],
+            "user_genomes": user_genomes or [],
+            "user_feature_groups": user_feature_groups or [],
+            "reference_genome_index": reference_genome_index,
+            "min_seq_cov": min_seq_cov,
+            "max_e_val": max_e_val,
+            "min_ident": min_ident,
+            "min_positives": min_positives,
+            "output_path": output_path,
+            "output_file": output_file
+        }
+        data = ["GenomeComparison", params, {}]
+        result = api.call("AppService.start_app2", data, 1, token)
+        return result
+    except Exception as e:
+        print(e)
+        return []
+
+def start_comparative_systems_app(api: JsonRpcCaller, token: str = None, user_id: str = None, output_path: str = None, output_file: str = None, genome_ids: List[str] = None, genome_groups: List[str] = None) -> str:
+    app_name = "ComparativeSystems"
+    try:
+        # Set default values if not provided
+        output_path, output_file = _set_default_output_paths(user_id, app_name, output_path, output_file)
+        params = {
+            "output_path": output_path,
+            "output_file": output_file,
+            "genome_ids": genome_ids or [],
+            "genome_groups": genome_groups or []
+        }
+        data = ["ComparativeSystems", params, {}]
+        result = api.call("AppService.start_app2", data, 1, token)
+        return result
+    except Exception as e:
+        print(e)
+        return []
+
+def start_docking_app(api: JsonRpcCaller, token: str = None, user_id: str = None, protein_input_type: str = None, input_pdb: List[str] = None, user_pdb_file: List[str] = None, ligand_library_type: str = None, ligand_named_library: str = None, ligand_smiles_list: List[str] = None, ligand_ws_file: str = None, top_n: int = None, batch_size: int = 10, output_path: str = None, output_file: str = None, enable_debug: bool = None, _tmpdir: str = None) -> str:
+    app_name = "Docking"
+    try:
+        # Set default values if not provided
+        output_path, output_file = _set_default_output_paths(user_id, app_name, output_path, output_file)
+        params = {
+            "protein_input_type": protein_input_type or "",
+            "input_pdb": input_pdb or [],
+            "user_pdb_file": user_pdb_file or [],
+            "ligand_library_type": ligand_library_type or "",
+            "ligand_named_library": ligand_named_library or "",
+            "ligand_smiles_list": ligand_smiles_list or [],
+            "ligand_ws_file": ligand_ws_file or "",
+            "top_n": top_n,
+            "batch_size": batch_size,
+            "output_path": output_path,
+            "output_file": output_file,
+            "enable_debug": enable_debug,
+            "_tmpdir": _tmpdir or ""
+        }
+        data = ["Docking", params, {}]
+        result = api.call("AppService.start_app2", data, 1, token)
+        return result
+    except Exception as e:
+        print(e)
+        return []
+
+def start_similar_genome_finder_app(api: JsonRpcCaller, token: str = None, user_id: str = None, selectedGenomeId: str = None, fasta_file: str = None, max_pvalue: float = None, max_distance: float = None, max_hits: int = None, include_reference: bool = None, include_representative: bool = None, include_bacterial: bool = None, include_viral: bool = None, output_path: str = None, output_file: str = None) -> str:
+    app_name = "SimilarGenomeFinder"
+    try:
+        # Set default values if not provided
+        output_path, output_file = _set_default_output_paths(user_id, app_name, output_path, output_file)
+        
+        # Call the Minhash.compute_genome_distance_for_genome2 method
+        function_call = ""
+        if selectedGenomeId:
+            params = [selectedGenomeId, max_pvalue, max_distance, max_hits, include_reference, include_representative, include_bacterial, include_viral]
+            function_call = "Minhash.compute_genome_distance_for_genome2"
+        elif fasta_file:
+            params = [fasta_file, max_pvalue, max_distance, max_hits, include_reference, include_representative, include_bacterial, include_viral]
+            function_call = "Minhash.compute_genome_distance_for_fasta2"
+        else:
+            return "Error: selectedGenomeId or fasta_file is required"
+        
+        result = api.call(function_call, params, 1, token)
+        output_headers = ['genome_id','distance','pvalue','kmers']
+        return output_headers, result
     except Exception as e:
         print(e)
         return []
