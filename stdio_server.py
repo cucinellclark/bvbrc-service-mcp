@@ -1,14 +1,11 @@
 from fastmcp import FastMCP
 from json_rpc import JsonRpcCaller
 from service_tools import register_all_tools
-import json
 import sys
+import os
 
-with open('config.json', 'r') as f:
-    config = json.load(f)
-
-service_api_url = config['service_api_url']
-similar_genome_finder_api_url = config.get('similar_genome_finder_api_url', service_api_url)
+service_api_url = os.getenv("SERVICE_API_URL")
+similar_genome_finder_api_url = os.getenv("SIMILAR_GENOME_FINDER_API_URL")
 
 api = JsonRpcCaller(service_api_url)
 similar_genome_finder_api = JsonRpcCaller(similar_genome_finder_api_url)
