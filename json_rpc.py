@@ -36,6 +36,9 @@ class JsonRpcCaller:
             requests.RequestException: If the HTTP request fails
             ValueError: If the response contains an error
         """
+
+        params.append({'base_url': 'https://www.patricbrc.org'})
+
         payload = {
             "jsonrpc": "2.0",
             "method": method,
