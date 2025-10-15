@@ -71,7 +71,7 @@ def register_all_tools(mcp: FastMCP, api: JsonRpcCaller, similar_genome_finder_a
     # Genomics Analysis Services
     @mcp.tool()
     def service_start_genome_assembly_app(token: str = None, paired_end_libs: List[Dict] = None, single_end_libs: List[Dict] = None, srr_ids: List[str] = None, max_bases: int = 10000000000, recipe: str = "auto", racon_iter: int = 2, pilon_iter: int = 2, trim: bool = False, target_depth: int = 200, normalize: bool = False, filtlong: bool = False, genome_size: int = 5000000, min_contig_len: int = 300, min_contig_cov: float = 5.0, output_path: str = None, output_file: str = None) -> str:
-       """Assemble whole genome sequencing (WGS) reads into contigs using various algorithms.
+        """Assemble whole genome sequencing (WGS) reads into contigs using various algorithms.
           
           Supports multiple sequencing platforms (Illumina, PacBio, Nanopore) and handles both 
           paired-end and single-end reads. Automatically selects optimal assembly recipe or allows 
@@ -292,11 +292,11 @@ def register_all_tools(mcp: FastMCP, api: JsonRpcCaller, similar_genome_finder_a
         - PRIMER_DNA_CONC: Annealing oligo concentration (nM) (optional)
         - PRIMER_DNTP_CONC: dNTP concentration (mM) (optional)
         """
-            user_id = extract_userid_from_token(token)
-            return start_primer_design_app(api, token=token, user_id=user_id, output_file=output_file, output_path=output_path, input_type=input_type, sequence_input=sequence_input, SEQUENCE_ID=SEQUENCE_ID, SEQUENCE_TARGET=SEQUENCE_TARGET, SEQUENCE_INCLUDED_REGION=SEQUENCE_INCLUDED_REGION, SEQUENCE_EXCLUDED_REGION=SEQUENCE_EXCLUDED_REGION, SEQUENCE_OVERLAP_JUNCTION_LIST=SEQUENCE_OVERLAP_JUNCTION_LIST, PRIMER_PICK_INTERNAL_OLIGO=PRIMER_PICK_INTERNAL_OLIGO, PRIMER_PRODUCT_SIZE_RANGE=PRIMER_PRODUCT_SIZE_RANGE, PRIMER_NUM_RETURN=PRIMER_NUM_RETURN, PRIMER_MIN_SIZE=PRIMER_MIN_SIZE, PRIMER_OPT_SIZE=PRIMER_OPT_SIZE, PRIMER_MAX_SIZE=PRIMER_MAX_SIZE, PRIMER_MAX_TM=PRIMER_MAX_TM, PRIMER_MIN_TM=PRIMER_MIN_TM, PRIMER_OPT_TM=PRIMER_OPT_TM, PRIMER_PAIR_MAX_DIFF_TM=PRIMER_PAIR_MAX_DIFF_TM, PRIMER_MAX_GC=PRIMER_MAX_GC, PRIMER_MIN_GC=PRIMER_MIN_GC, PRIMER_OPT_GC=PRIMER_OPT_GC, PRIMER_SALT_MONOVALENT=PRIMER_SALT_MONOVALENT, PRIMER_SALT_DIVALENT=PRIMER_SALT_DIVALENT, PRIMER_DNA_CONC=PRIMER_DNA_CONC, PRIMER_DNTP_CONC=PRIMER_DNTP_CONC)
+        user_id = extract_userid_from_token(token)
+        return start_primer_design_app(api, token=token, user_id=user_id, output_file=output_file, output_path=output_path, input_type=input_type, sequence_input=sequence_input, SEQUENCE_ID=SEQUENCE_ID, SEQUENCE_TARGET=SEQUENCE_TARGET, SEQUENCE_INCLUDED_REGION=SEQUENCE_INCLUDED_REGION, SEQUENCE_EXCLUDED_REGION=SEQUENCE_EXCLUDED_REGION, SEQUENCE_OVERLAP_JUNCTION_LIST=SEQUENCE_OVERLAP_JUNCTION_LIST, PRIMER_PICK_INTERNAL_OLIGO=PRIMER_PICK_INTERNAL_OLIGO, PRIMER_PRODUCT_SIZE_RANGE=PRIMER_PRODUCT_SIZE_RANGE, PRIMER_NUM_RETURN=PRIMER_NUM_RETURN, PRIMER_MIN_SIZE=PRIMER_MIN_SIZE, PRIMER_OPT_SIZE=PRIMER_OPT_SIZE, PRIMER_MAX_SIZE=PRIMER_MAX_SIZE, PRIMER_MAX_TM=PRIMER_MAX_TM, PRIMER_MIN_TM=PRIMER_MIN_TM, PRIMER_OPT_TM=PRIMER_OPT_TM, PRIMER_PAIR_MAX_DIFF_TM=PRIMER_PAIR_MAX_DIFF_TM, PRIMER_MAX_GC=PRIMER_MAX_GC, PRIMER_MIN_GC=PRIMER_MIN_GC, PRIMER_OPT_GC=PRIMER_OPT_GC, PRIMER_SALT_MONOVALENT=PRIMER_SALT_MONOVALENT, PRIMER_SALT_DIVALENT=PRIMER_SALT_DIVALENT, PRIMER_DNA_CONC=PRIMER_DNA_CONC, PRIMER_DNTP_CONC=PRIMER_DNTP_CONC)
 
-        @mcp.tool(name="service_start_variation_app", description="Identify and annotate small nucleotide variations (SNVs) relative to a reference genome")
-        def service_start_variation_app(token: str = None, reference_genome_id: str = None, paired_end_libs: List[Dict] = None, single_end_libs: List[Dict] = None, srr_ids: List[str] = None, mapper: str = "BWA-mem", caller: str = "FreeBayes", output_path: str = None, output_file: str = None) -> str:
+    @mcp.tool(name="service_start_variation_app", description="Identify and annotate small nucleotide variations (SNVs) relative to a reference genome")
+    def service_start_variation_app(token: str = None, reference_genome_id: str = None, paired_end_libs: List[Dict] = None, single_end_libs: List[Dict] = None, srr_ids: List[str] = None, mapper: str = "BWA-mem", caller: str = "FreeBayes", output_path: str = None, output_file: str = None) -> str:
         """Identify and annotate small nucleotide variations (SNVs) relative to a reference genome.
         
         This tool performs comprehensive variant calling analysis using multiple mapping
