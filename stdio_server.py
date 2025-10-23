@@ -1,6 +1,7 @@
 from fastmcp import FastMCP
 from json_rpc import JsonRpcCaller
 from service_tools import register_all_tools
+from service_prompts import register_prompts
 from token_provider import TokenProvider
 import sys
 import os
@@ -18,6 +19,9 @@ mcp = FastMCP("BVBRC Service MCP Server")
 
 # Register all tools with the MCP server and token provider
 register_all_tools(mcp, api, similar_genome_finder_api, token_provider)
+
+# Register all prompts with the MCP server
+register_prompts(mcp)
 
 def main() -> int:
     print("Starting BVBRC Service MCP FastMCP Server in stdio mode...", file=sys.stderr)

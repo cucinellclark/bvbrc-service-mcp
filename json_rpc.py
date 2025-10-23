@@ -37,7 +37,7 @@ class JsonRpcCaller:
             ValueError: If the response contains an error
         """
 
-        params.append({'base_url': 'https://www.patricbrc.org'})
+        params['base_url'] = 'https://www.patricbrc.org'
 
         payload = {
             "jsonrpc": "2.0",
