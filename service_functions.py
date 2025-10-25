@@ -55,7 +55,6 @@ def get_service_info(service_name: str) -> str:
 def enumerate_apps(api: JsonRpcCaller, token: str = None, user_id: str = None) -> List[str]:
     try:
         result = api.call("AppService.enumerate_apps", {}, _generate_numerical_uuid(), token)
-        print(result)
         return result
     except Exception as e:
         print(e)

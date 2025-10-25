@@ -53,14 +53,14 @@ def register_all_tools(mcp: FastMCP, api: JsonRpcCaller, similar_genome_finder_a
     
     # Basic Services
     @mcp.tool(name="list_service_apps", description="Enumerate all apps. Parameters: token (str, optional) - Authentication token for API access")
-    def service_enumerate_apps(token: Optional[str] = None) -> List[str]:
+    def service_enumerate_apps(token: Optional[str] = None) -> str:
         # Get the appropriate token
         auth_token = token_provider.get_token(token)
         if not auth_token:
             return ["Error: No authentication token available"]
-        
+
         user_id = extract_userid_from_token(auth_token)
-        return enumerate_apps(api, auth_token, user_id=user_id)
+        return str(enumerate_apps(api, auth_token, user_id=user_id))
 
     @mcp.tool(name="submit_date_app", description="Start the date app. Parameters: token (str, optional) - Authentication token for API access, output_path (str, required) - Path for output files, output_file (str, required) - Name of output file")
     def submit_date_app(token: Optional[str] = None, output_path: str = None, output_file: str = None) -> str:
