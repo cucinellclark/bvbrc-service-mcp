@@ -2,6 +2,7 @@ from json_rpc import JsonRpcCaller
 from typing import List, Dict, Any
 import uuid
 import json
+import os
 
 def _generate_numerical_uuid() -> int:
     """Generate a numerical UUID for JSON RPC call IDs."""
@@ -18,6 +19,38 @@ def _set_default_output_paths(user_id: str, app_name: str, output_path: str = No
 def _filter_none_params(params: Dict[str, Any]) -> Dict[str, Any]:
     """Helper function to filter out parameters with None values."""
     return {k: v for k, v in params.items() if v is not None}
+
+def get_service_info(service_name: str) -> str:
+    """
+    Get service information from prompt files.
+    
+    Args:
+        service_name: Name of the service (e.g., 'genome_assembly', 'blast', 'date')
+    
+    Returns:
+        String containing the service information/parameters from the prompt file
+        
+    Raises:
+        FileNotFoundError: If the prompt file for the service doesn't exist
+        IOError: If there's an error reading the file
+    """
+    try:
+        # Get the directory where this script is located
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        
+        # Construct the path to the prompt file
+        prompt_file_path = os.path.join(script_dir, 'prompts', f'{service_name}.txt')
+        
+        # Check if file exists
+        if not os.path.exists(prompt_file_path):
+            raise FileNotFoundError(f"Service prompt file not found: {service_name}.txt")
+        
+        # Read and return the file contents
+        with open(prompt_file_path, 'r', encoding='utf-8') as f:
+            return f.read()
+            
+    except Exception as e:
+        raise Exception(f"Error reading service info for '{service_name}': {str(e)}")
 
 def enumerate_apps(api: JsonRpcCaller, token: str = None, user_id: str = None) -> List[str]:
     try:

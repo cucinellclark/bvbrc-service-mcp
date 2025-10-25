@@ -1,0 +1,15 @@
+The parameters for the taxonomic classification app are:
+  - host_genome: Host genome for filtering (required, default: no_host)
+  - analysis_type: Analysis type - pathogen/microbiome/16S (required, default: 16S)
+  - paired_end_libs: Paired-end read libraries with sample IDs (optional)
+  - single_end_libs: Single-end read libraries with sample IDs (optional)
+  - srr_libs: SRA datasets with sample IDs (optional)
+  - database: Reference database - bvbrc/greengenes/silva/standard (required, default: SILVA)
+  - save_classified_sequences: Save classified sequences (default: False)
+  - save_unclassified_sequences: Save unclassified sequences (default: False)
+  - confidence_interval: Classification confidence threshold (default: 0.1)
+  - output_path: Output directory (required)
+  - output_file: Output basename (required)
+
+At least one input source (paired_end_libs, single_end_libs, or srr_libs) must be provided.
+
